@@ -37,10 +37,10 @@ class UserService implements IUserService {
       userRepository.loginWithEmailPassoword(email, password, supplierUser);
 
   @override
-  Future<UserModel> loginByEmailsocialKey(
+  Future<UserModel> loginWithSocial(
       String email, String avatar, String socitalType, String socialKey) async {
     try {
-      return await userRepository.loginWithSocial(
+      return await userRepository.loginByEmailSocialKey(
           email, socialKey, socitalType);
     } on UserNotfoundException catch (e) {
       log.error('Usuário não encontrado, criando um usuário', e);

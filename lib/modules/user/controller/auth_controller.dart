@@ -31,15 +31,14 @@ class AuthController {
         user = await userService.loginWithEmailPassoword(
             loginViewModel.login, loginViewModel.password, loginViewModel.supplierUser);
       } else {
-        user = await userService.loginByEmailsocialKey(
+        user = await userService.loginWithSocial(
           loginViewModel.login,
           loginViewModel.avatar,
           loginViewModel.socialType,
           loginViewModel.socialkey,
         );
       }
-      return Response.ok(jsonEncode(
-          {'access_token': JwtHelper.generateJWT(user.id!, user.supplierId)}));
+      return Response.ok(jsonEncode({'access_token': JwtHelper.generateJWT(user.id!, user.supplierId)}));
     } on UserNotfoundException {
       return Response.forbidden(jsonEncode({'message':'Usuario ou senha invalidos'}));
     }catch(e,s) {
@@ -62,6 +61,10 @@ class AuthController {
       return Response.internalServerError();
 
     }
+  }
+  @Route('PATCH','/confirm')
+  Future<Response> confirmLogin(Request request) async{
+     return Response.ok(jsonEncode(''));
   }
 
    Router get router => _$AuthControllerRouter(this);

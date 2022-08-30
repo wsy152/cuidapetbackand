@@ -111,7 +111,7 @@ class UserRepository implements IUserRepository {
   }
   
   @override
-  Future<UserModel> loginWithSocial(String email, String socialKey, socitalType) async{
+  Future<UserModel> loginByEmailSocialKey(String email, String socialKey, socitalType) async{
     MySqlConnection? conn;
 
   try {    
@@ -144,6 +144,34 @@ class UserRepository implements IUserRepository {
     }
 
   }
+  
+  @override
+  Future<void> updateUserDeviceTokenAndRefreshToken(UserModel user)async {
+   
+    MySqlConnection? conn;
+    try{  
+
+      conn = await connection.openConnection();  
+
+      final setParams = {};
+
+      if(user.iosToken != null){
+        setParams.putIfAbsent('ios_token', () => user.iosToken);
+
+      }else{
+         setParams.putIfAbsent('android_token', () => user.androidToken);
+
+      }
+      
+    } finally {
+      await conn?.close();
+      
+    }
+
+   
+  }
+
+
   
 
  

@@ -8,6 +8,7 @@
             "name": "cuidapet_api",
             "request": "launch",
             "type": "dart",
+            "toolArgs": ["--no-sound-null-safety"],
             "program":"${workspaceFolder}/bin/server.dart"
         }
     ]
