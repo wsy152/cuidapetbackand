@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cuidapet_api/application/entitties/user_model.dart';
 import 'package:cuidapet_api/application/exceptions/user_notfound_exception.dart';
+import 'package:cuidapet_api/application/helpers/jwt_helper.dart';
 import 'package:cuidapet_api/application/logger/i_mylogger.dart';
 import 'package:cuidapet_api/modules/user/data/i_user_repository.dart';
+import 'package:cuidapet_api/modules/user/view_models/user_confirm_input_model.dart';
 import 'package:cuidapet_api/modules/user/view_models/user_save.input_model.dart';
 import 'package:injectable/injectable.dart';
 
@@ -53,8 +55,17 @@ class UserService implements IUserService {
       return await userRepository.createUser(user);
     }
   }
-  
 
-  
-
+  @override
+  Future<String> confirmLogin(UserConfirmInputModel imputModel)async {
+     final refreshToken = JwtHelper.refreshToken(imputModel.accessToken);
+     final user = UserModel(
+      id: imputModel.userId,
+      refreshToken:  refreshToken,
+      iosToken: imputModel.iosDeviceToken,
+      androidToken: imputModel.androidDeviceToken
+     );
+      await userRepository.updateUserDeviceTokenAndRefreshToken(user);
+      return refreshToken;
+  }
 }

@@ -146,29 +146,38 @@ class UserRepository implements IUserRepository {
   }
   
   @override
-  Future<void> updateUserDeviceTokenAndRefreshToken(UserModel user)async {
-   
+  Future<void> updateUserDeviceTokenAndRefreshToken(UserModel user) async {
     MySqlConnection? conn;
-    try{  
-
-      conn = await connection.openConnection();  
+    try {
+      conn = await connection.openConnection();
 
       final setParams = {};
 
-      if(user.iosToken != null){
+      if (user.iosToken != null) {
         setParams.putIfAbsent('ios_token', () => user.iosToken);
-
-      }else{
-         setParams.putIfAbsent('android_token', () => user.androidToken);
-
+      } else {
+        setParams.putIfAbsent('android_token', () => user.androidToken);
       }
-      
+
+      final query = ''' 
+          update usuario
+          set
+          ${setParams.keys.elementAt(0)} = ?
+          refresh_token = ?
+          where
+          id = ?
+      ''';
+      await conn.query(query, [
+        setParams.values.elementAt(0),
+        user.refreshToken,
+        user.id,
+      ]);
+    } on MySqlException catch (e,s){
+      log.error('Erro ao confirmar login', e,s);
+      throw DatabaseException();
     } finally {
       await conn?.close();
-      
     }
-
-   
   }
 
 
